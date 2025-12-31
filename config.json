@@ -1,0 +1,23 @@
+{
+  "description": "Конфигурация DeepSeek Chat Export Tool",
+  "version": "1.0.0",
+  "settings": {
+    "exclude_files": ["package.json", "tsconfig.json", "node_modules"],
+    "default_open_in_browser": true,
+    "auto_expand_first_branch": true,
+    "output_directory": "exports",
+    "cache_control": true
+  },
+  "theme": {
+    "primary_color": "#667eea",
+    "secondary_color": "#764ba2",
+    "user_message_color": "#007bff",
+    "assistant_message_color": "#28a745"
+  },
+  "features": {
+    "enable_code_copy": true,
+    "enable_smooth_scroll": true,
+    "enable_toc": true,
+    "enable_branch_stats": true
+  }
+}
