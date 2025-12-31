@@ -43,7 +43,7 @@
 
 1. **Скачайте скрипт:**
 ```bash
-git clone https://github.com/ваш-username/deepseek-chat-export.git
+git clone https://github.com/andrmkrff/deepseek-chat-export.git
 cd deepseek-chat-export
 ```
 2. **Подготовьте файлы экспорта из DeepSeek:**
@@ -206,9 +206,9 @@ deepseek-chat-export/
     <strong>Сделано с ❤️ для сообщества DeepSeek</strong>
   </p>
   <p>
-    <a href="https://github.com/ваш-username/deepseek-chat-export">GitHub</a> •
+    <a href="https://github.com/andrmkrff/deepseek-chat-export">GitHub</a> •
     <a href="https://www.deepseek.com">DeepSeek</a> •
-    <a href="https://github.com/ваш-username/deepseek-chat-export/issues">Issues</a>
+    <a href="https://github.com/andrmkrff/deepseek-chat-export/issues">Issues</a>
   </p>
 </div>
 ```
