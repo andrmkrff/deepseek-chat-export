@@ -37,6 +37,10 @@ Thumbs.db
 config_local.json
 
 # Данные
-*.json
+#*.json
+#!examples/sample_conversation.json
+personal_data.json
+private_chats.json
+
+!examples/*.json
 !config.json
-!examples/sample_conversation.json
