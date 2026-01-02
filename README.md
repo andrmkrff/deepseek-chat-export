@@ -46,7 +46,7 @@
 git clone https://github.com/andrmkrff/deepseek-chat-export.git
 cd deepseek-chat-export
 ```
-2. **Подготовьте файлы экспорта из DeepSeek:**
+2. **Подготовьте файлы экспорта из DeepSeek (или для теста можно взять json файл из папки "examples"):**
 
 В веб-версии DeepSeek: Настройки → Данные → Экспорт данных → Скачать
 
