@@ -243,34 +243,74 @@ def extract_message_with_node_id(node, node_id):
         'children': node.get('children', [])
     }
 
-def determine_role(message, node_id):
-    """Определение роли сообщения - улучшенная версия"""
-    # Пробуем получить роль из author
-    author = message.get('author', {})
-    if isinstance(author, dict):
-        role = author.get('role', '')
-        if role:
-            return role
+def determine_role(message, node_id, branch_messages=None):
+    """Определение роли для DeepSeek Reasoner (улучшенная версия)"""
+    if not message or not isinstance(message, dict):
+        return 'unknown'
     
-    # Пробуем определить по содержимому модели
+    # Способ 1: Определяем по fragments.type (ваш случай!)
+    fragments = message.get('fragments', [])
+    if fragments and isinstance(fragments, list) and len(fragments) > 0:
+        first_fragment = fragments[0]
+        if isinstance(first_fragment, dict):
+            fragment_type = first_fragment.get('type', '')
+            if fragment_type == 'REQUEST':
+                return 'user'
+            elif fragment_type in ['THINK', 'RESPONSE', 'ANSWER']:
+                return 'assistant'
+    
+    # Способ 2: По содержимому первого фрагмента
+    if fragments and isinstance(fragments, list) and len(fragments) > 0:
+        first_fragment = fragments[0]
+        if isinstance(first_fragment, dict):
+            content = first_fragment.get('content', '')
+            if content:
+                # Проверяем паттерны пользователя
+                content_lower = content.lower()
+                user_patterns = ['?', 'помоги', 'расскажи', 'объясни', 'как', 'что', 'почему']
+                assistant_patterns = ['хм,', 'нужно', 'стоит', 'важно', 'можно', 'следует']
+                
+                user_score = sum(1 for pattern in user_patterns if pattern in content_lower)
+                assistant_score = sum(1 for pattern in assistant_patterns if pattern in content_lower)
+                
+                if user_score > assistant_score:
+                    return 'user'
+                elif assistant_score > user_score:
+                    return 'assistant'
+    
+    # Способ 3: По model (если есть)
     model = message.get('model', '')
     if model:
-        model_lower = model.lower()
-        if any(x in model_lower for x in ['gpt', 'assistant', 'deepseek', 'claude']):
+        model_lower = str(model).lower()
+        if any(x in model_lower for x in ['deepseek', 'gpt', 'assistant', 'ai']):
             return 'assistant'
         elif any(x in model_lower for x in ['user', 'human']):
             return 'user'
     
-    # Пробуем определить по порядковому номеру узла
-    # В DeepSeek обычно: нечетные узлы (1, 3, 5) - пользователь, четные (2, 4, 6) - ассистент
-    try:
-        node_num = int(node_id) if node_id.isdigit() else 0
-        if node_num > 0:
-            return 'user' if node_num % 2 == 1 else 'assistant'
-    except:
-        pass
+    # Способ 4: По node_id (чередование)
+    if node_id and node_id != 'root':
+        try:
+            import re
+            numbers = re.findall(r'\d+', node_id)
+            if numbers:
+                node_num = int(numbers[-1])
+                # Обычно: нечетные = пользователь, четные = ассистент
+                return 'user' if node_num % 2 == 1 else 'assistant'
+        except:
+            pass
     
-    # Если не определили, вернем unknown
+    # Способ 5: Чередование в ветке
+    if branch_messages and len(branch_messages) > 0:
+        last_role = branch_messages[-1].get('role')
+        if last_role == 'user':
+            return 'assistant'
+        elif last_role == 'assistant':
+            return 'user'
+    
+    # Способ 6: По умолчанию считаем первое сообщение пользователем
+    if not branch_messages or len(branch_messages) == 0:
+        return 'user'
+    
     return 'unknown'
 
 def extract_content_from_fragments(message_data):
